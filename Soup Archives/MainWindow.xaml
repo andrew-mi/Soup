@@ -4,9 +4,36 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Soup_Archives"
+        xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize">
+
+    <Window.Style>
+        <Style TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}"/>
+    </Window.Style>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+        CaptionHeight="0"
+        ResizeBorderThickness="5" />
+    </WindowChrome.WindowChrome>
+
+
+    <Window.CommandBindings>
+        <CommandBinding Command="SystemCommands.CloseWindowCommand" Executed="CloseWindow" CanExecute="CanExecute" />
+        <CommandBinding Command="SystemCommands.MinimizeWindowCommand" Executed="MinimizeWindow"  CanExecute="CanExecute" />
+    </Window.CommandBindings>
+
+    <DockPanel x:Name="Root">
+        <Grid x:Name="TitleBar" DockPanel.Dock="Top" Background="#262630" MouseMove="TitleBar_MouseMove">
+            <DockPanel>
+                <Button Visibility="Visible" Width="40" Height="40" VerticalContentAlignment="Center" FontSize="10" Opacity="0.8" Command="SystemCommands.CloseWindowCommand" Content="&#xE10A;" FontFamily="Segoe MDL2 Assets"  DockPanel.Dock="Right" Style="{DynamicResource {x:Static adonisUi:Styles.ToolbarButton}}"/>
+                <Button Visibility="Visible" Width="40" Height="40" VerticalContentAlignment="Center" FontSize="10" Opacity="0.8" Command="SystemCommands.MinimizeWindowCommand" Content="&#xE108;" FontFamily="Segoe MDL2 Assets" DockPanel.Dock="Right" Style="{DynamicResource {x:Static adonisUi:Styles.ToolbarButton}}"/>
+                <TextBlock Text="Soup" IsHitTestVisible="False" FontFamily="Segoe UI" FontWeight="ExtraLight" Margin="12,0,0,0" Foreground="White" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Grid>
+        <Grid>
+            
+        </Grid>
+    </DockPanel>
 </Window>
