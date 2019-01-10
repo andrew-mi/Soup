@@ -29,7 +29,10 @@ namespace Soup_Archives
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            if (Environment.GetCommandLineArgs().Count()>=1)
+            {
+
+            }
         }
 
         #region Window Titlebar
