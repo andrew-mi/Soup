@@ -1,6 +1,10 @@
+using SharpCompress.Common;
+using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace Soup_Archives
 {
@@ -29,9 +34,58 @@ namespace Soup_Archives
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (Environment.GetCommandLineArgs().Count()>=1)
+            try
             {
+                CheckForFile();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Soup");
+            }
+        }
 
+        private void CheckForFile()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            if (!args.Contains("tryOpen"))
+                return;
+
+            if (args.Count() == 0)
+                return;
+            string FilePath = args.Last();
+
+            if (!File.Exists(FilePath))
+                FilePath = Environment.GetCommandLineArgs()[0].ToString();
+
+            if (!File.Exists(FilePath))
+                return;
+
+            if (MessageBox.Show("Try Extract " + Path.GetFileNameWithoutExtension(FilePath) + " to " + Path.GetDirectoryName(FilePath) + "?", "Soup", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                return;
+
+            string ExtractPath = Path.Combine(Path.GetDirectoryName(FilePath), Path.GetFileNameWithoutExtension(FilePath));
+            int ExtractPathCopy = 0;
+            while (Directory.Exists(ExtractPath + (ExtractPathCopy == 0 ? "" : "-" + ExtractPathCopy.ToString())))
+            {
+                ExtractPathCopy++;
+            }
+            ExtractPath += (ExtractPathCopy == 0 ? "" : "-" + ExtractPathCopy.ToString());
+
+            using (Stream stream = File.OpenRead(FilePath))
+            using (var reader = SharpCompress.Readers.ReaderFactory.Open(stream))
+            {
+                while (reader.MoveToNextEntry())
+                {
+                    if (!reader.Entry.IsDirectory)
+                    {
+                        Console.WriteLine(reader.Entry.Key);
+                        reader.WriteEntryToDirectory(ExtractPath, new ExtractionOptions()
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
+                    }
+                }
             }
         }
 

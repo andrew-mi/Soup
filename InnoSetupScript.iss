@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Soup"
-#define MyAppVersion "1.0.0.7"
+#define MyAppVersion "1.0.1.1"
 #define MyAppPublisher "Andrew Mitchell"
 #define MyAppURL "https://andrewmitchell4.typeform.com/to/EPQpiB"
 #define MyAppExeName "Soup.exe"
@@ -21,11 +21,15 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
-OutputBaseFilename=setup
+OutputBaseFilename=SoupSetup
 SetupIconFile=C:\Users\andre\Documents\A-MI Custom\Programming\Source\Soup Archives\Soup Archives\bin\Debug\Logo.ico
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
+UninstallDisplayName=Soup
+UninstallDisplayIcon={app}\Soup.exe
+DisableStartupPrompt=False
+DisableWelcomePage=False
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -54,4 +58,4 @@ Root: HKCR; Subkey: ".tar";                             ValueData: "{#MyAppName}
 Root: HKCR; Subkey: ".zip";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}";                     ValueData: "Program {#MyAppName}";  Flags: uninsdeletekey;   ValueType: string;  ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon";             ValueData: "{app}\{#MyAppExeName},0";               ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}\shell\open\command";  ValueData: """{app}\{#MyAppExeName}"" ""%1""";  ValueType: string;  ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}\shell\open\command";  ValueData: """{app}\{#MyAppExeName}"" ""tryOpen"" ""%1""";  ValueType: string;  ValueName: ""
