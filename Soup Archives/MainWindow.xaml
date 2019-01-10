@@ -1,4 +1,4 @@
-﻿<Window x:Class="Soup_Archives.MainWindow"
+<Window x:Class="Soup_Archives.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Soup_Archives"
         xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize">
+        Title="Soup" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize">
 
     <Window.Style>
         <Style TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}"/>
@@ -33,7 +33,11 @@
             </DockPanel>
         </Grid>
         <Grid>
-            
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI" FontSize="16" FontWeight="ExtraLight" Margin="0,-20,0,0">
+                Open a Rar, Zip, Tar or 7Zip Archive with Soup to Extract It
+                <LineBreak/>
+                Please Submit Bugs or Feature Requests <Hyperlink NavigateUri="https://andrewmitchell4.typeform.com/to/EPQpiB" RequestNavigate="Hyperlink_RequestNavigate" Foreground="White">Here</Hyperlink>
+            </TextBlock>
         </Grid>
     </DockPanel>
 </Window>

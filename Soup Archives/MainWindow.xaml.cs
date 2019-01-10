@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -63,5 +63,7 @@ namespace Soup_Archives
         }
         #endregion
 
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e) =>
+            System.Diagnostics.Process.Start(e.Uri.ToString());
     }
 }
