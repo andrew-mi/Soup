@@ -6,17 +6,25 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+
+//Because we imported Windows.Forms .......
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Path = System.IO.Path;
 
 namespace Soup_Archives
@@ -30,9 +38,17 @@ namespace Soup_Archives
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+
+            _notifyIcon = new NotifyIcon()
+            {
+                Text= "Working ..."
+            };
+            _notifyIcon.Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private readonly NotifyIcon _notifyIcon;
+        private const int Delay = 4000;
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -40,16 +56,24 @@ namespace Soup_Archives
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Soup");
+                System.Windows.MessageBox.Show(ex.Message, "Soup");
+            }
+
+            if (DidExtract)
+            {
+                Hide();
+                _notifyIcon.Text = "Done!";
+                await Task.Delay(Delay + 2000);
+                Close();
             }
         }
 
+        private bool DidExtract = false;
         private void CheckForFile()
         {
             string[] args = Environment.GetCommandLineArgs();
             if (!args.Contains("tryOpen"))
                 return;
-
             if (args.Count() == 0)
                 return;
             string FilePath = args.Last();
@@ -63,6 +87,7 @@ namespace Soup_Archives
             if (MessageBox.Show("Try Extract " + Path.GetFileNameWithoutExtension(FilePath) + " to " + Path.GetDirectoryName(FilePath) + "?", "Soup", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
 
+            _notifyIcon.Visible = true;
             string ExtractPath = Path.Combine(Path.GetDirectoryName(FilePath), Path.GetFileNameWithoutExtension(FilePath));
             int ExtractPathCopy = 0;
             while (Directory.Exists(ExtractPath + (ExtractPathCopy == 0 ? "" : "-" + ExtractPathCopy.ToString())))
@@ -87,6 +112,12 @@ namespace Soup_Archives
                     }
                 }
             }
+            DidExtract = true;
+            _notifyIcon.BalloonTipClicked += (s, a) =>
+            {
+                Process.Start(ExtractPath);
+            };
+            _notifyIcon.ShowBalloonTip(Delay, "Extract Complete", "Click to Open", ToolTipIcon.Info);
         }
 
         #region Window Titlebar
