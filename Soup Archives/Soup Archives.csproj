@@ -153,7 +153,7 @@
     <Content Include="Icons\01-LightLogo.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Logo.png" />
+    <Resource Include="LightLogo.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
