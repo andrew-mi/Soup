@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
 OutputBaseFilename=SoupSetup
-SetupIconFile=Soup Archives\bin\Release\Icons\01-LightLogo.ico
+SetupIconFile=Soup Archives\bin\MakeSetup\Icons\01-LightLogo.ico
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
@@ -35,8 +35,8 @@ DisableWelcomePage=False
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "Soup Archives\bin\Release\Soup.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Soup Archives\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Soup Archives\bin\MakeSetup\Soup.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Soup Archives\bin\MakeSetup\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

@@ -60,7 +60,17 @@
     </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MakeSetup|AnyCPU'">
+    <OutputPath>bin\MakeSetup\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AdonisUI, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -159,6 +169,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)InsertIcons.exe" "$(TargetPath)" "$(ProjectDir)Icons"</PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)InsertIcons.exe" "$(TargetPath)" "$(ProjectDir)Icons"
+if "$(ConfigurationName)" == "MakeSetup" (
+  "$(SolutionDir)MakeSetup.bat"
+  "$(SolutionDir)Output\SoupSetup.exe"
+)
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
