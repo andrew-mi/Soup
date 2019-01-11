@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Soup"
-#define MyAppVersion "1.0.1.1"
+#define MyAppVersion "1.0.2.1"
 #define MyAppPublisher "Andrew Mitchell"
 #define MyAppURL "https://andrewmitchell4.typeform.com/to/EPQpiB"
 #define MyAppExeName "Soup.exe"
@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
 OutputBaseFilename=SoupSetup
-SetupIconFile=C:\Users\andre\Documents\A-MI Custom\Programming\Source\Soup Archives\Soup Archives\bin\Debug\Logo.ico
+SetupIconFile=Soup Archives\bin\Release\Icons\01-LightLogo.ico
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
@@ -46,16 +46,16 @@ Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Registry]
-Root: HKCR; Subkey: ".7zip";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".7z";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".zlib";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".gz";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".tgz";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".7-zip";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".z";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".rar";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".tar";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: ".zip";                             ValueData: "{#MyAppName}";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}";                     ValueData: "Program {#MyAppName}";  Flags: uninsdeletekey;   ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon";             ValueData: "{app}\{#MyAppExeName},0";               ValueType: string;  ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}\shell\open\command";  ValueData: """{app}\{#MyAppExeName}"" ""tryOpen"" ""%1""";  ValueType: string;  ValueName: ""
+Root: "HKCR"; Subkey: ".7zip"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".7z"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".zlib"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".gz"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".tgz"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".7-zip"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".z"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".rar"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".tar"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: ".zip"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: "HKCR"; Subkey: "{#MyAppName}"; ValueType: string; ValueData: "Program {#MyAppName}"; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "{#MyAppName}\DefaultIcon"; ValueType: string; ValueData: "{app}\{#MyAppExeName},1"
+Root: "HKCR"; Subkey: "{#MyAppName}\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""tryOpen"" ""%1"""
