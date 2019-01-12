@@ -16,3 +16,5 @@ Once set as your default program for your archive formats you can extract them w
 
 - `SetUserFTA` by [Christoph Kolbicz](https://kolbi.cz) licensed under [SetUserFTA-EULA.txt](https://github.com/andrew-mi/Soup/blob/master/SetUserFTA-EULA.txt)
 
+- [InsertIcons](https://github.com/einaregilsson/InsertIcons/) by [Einar Egilsson](https://github.com/einaregilsson) licensed under [MIT](https://github.com/einaregilsson/InsertIcons/blob/5e8e56e3d4cdae1321dbfc141f69e31c1baec6ce/LICENSE)
+
