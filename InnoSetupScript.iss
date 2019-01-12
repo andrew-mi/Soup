@@ -59,7 +59,7 @@ Root: "HKCR"; Subkey: ".rar"; ValueType: string; ValueData: "{#MyAppName}"; Flag
 Root: "HKCR"; Subkey: ".tar"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
 Root: "HKCR"; Subkey: ".zip"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
 Root: "HKCR"; Subkey: "{#MyAppName}"; ValueType: string; ValueData: "Program {#MyAppName}"; Flags: uninsdeletekey
-Root: "HKCR"; Subkey: "{#MyAppName}\DefaultIcon"; ValueType: string; ValueData: "{app}\{#MyAppExeName},1"
+Root: "HKCR"; Subkey: "{#MyAppName}\DefaultIcon"; ValueType: string; ValueData: "{app}\{#MyAppExeName},3"
 Root: "HKCR"; Subkey: "{#MyAppName}\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""tryOpen"" ""%1"""
 
 [Dirs]
