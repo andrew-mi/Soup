@@ -72,6 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MakeRunSetup|AnyCPU'">
+    <OutputPath>bin\MakeRunSetup\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AdonisUI, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AdonisUI.1.6.0\lib\net40\AdonisUI.dll</HintPath>
@@ -147,10 +150,18 @@
   <ItemGroup />
   <ItemGroup>
     <Resource Include="MixedLogo.png" />
-    <Resource Include="Icons\04-CompressedFolder.ico" />
-    <Resource Include="Icons\01-MixedLogo.ico" />
-    <Resource Include="Icons\02-LightLogo.ico" />
-    <Resource Include="Icons\03-DarkLogo.ico" />
+    <Content Include="Icons\04-CompressedFolder.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\01-MixedLogo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\02-LightLogo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\03-DarkLogo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="DarkLogo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -174,8 +185,10 @@
     <PostBuildEvent>"$(SolutionDir)InsertIcons.exe" "$(TargetPath)" "$(ProjectDir)Icons"
 if "$(ConfigurationName)" == "MakeSetup" (
   "$(SolutionDir)MakeSetup.bat"
-  "$(SolutionDir)Output\SoupSetup.exe"
 )
-</PostBuildEvent>
+if "$(ConfigurationName)" == "MakeRunSetup" (
+  "$(SolutionDir)MakeSetup.bat"
+  "$(SolutionDir)Output\SoupSetup.exe"
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
