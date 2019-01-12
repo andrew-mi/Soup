@@ -144,20 +144,17 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="MixedLogo.png" />
+    <Resource Include="Icons\04-CompressedFolder.ico" />
     <Resource Include="Icons\01-MixedLogo.ico" />
     <Resource Include="Icons\02-LightLogo.ico" />
     <Resource Include="Icons\03-DarkLogo.ico" />
-    <Resource Include="Icons\02-DarkLogo.ico" />
     <Content Include="DarkLogo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Icons\01-LightLogo.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Helpers\SetUserFTA.exe" />
     <Resource Include="LightLogo.png" />
   </ItemGroup>
   <ItemGroup>
