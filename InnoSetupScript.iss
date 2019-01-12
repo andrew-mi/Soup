@@ -38,12 +38,14 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "Soup Archives\bin\MakeSetup\Soup.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Soup Archives\bin\MakeSetup\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "Soup Archives\bin\MakeSetup\Helpers\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Flags: nowait postinstall skipifsilent; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"
+Filename: "{app}\Helpers\PostSetup.bat"; WorkingDir: "{app}\Helpers"; Flags: runasoriginaluser; Description: "Make Soup Default"
 
 [Registry]
 Root: "HKCR"; Subkey: ".7zip"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
@@ -59,3 +61,6 @@ Root: "HKCR"; Subkey: ".zip"; ValueType: string; ValueData: "{#MyAppName}"; Flag
 Root: "HKCR"; Subkey: "{#MyAppName}"; ValueType: string; ValueData: "Program {#MyAppName}"; Flags: uninsdeletekey
 Root: "HKCR"; Subkey: "{#MyAppName}\DefaultIcon"; ValueType: string; ValueData: "{app}\{#MyAppExeName},1"
 Root: "HKCR"; Subkey: "{#MyAppName}\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""tryOpen"" ""%1"""
+
+[Dirs]
+Name: "{app}\Helpers"
