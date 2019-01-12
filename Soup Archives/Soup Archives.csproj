@@ -148,6 +148,9 @@
     <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Icons\01-MixedLogo.ico" />
+    <Resource Include="Icons\02-LightLogo.ico" />
+    <Resource Include="Icons\03-DarkLogo.ico" />
     <Resource Include="Icons\02-DarkLogo.ico" />
     <Content Include="DarkLogo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
