@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Soup_Archives"
         xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         mc:Ignorable="d"
-        Title="Soup" Height="250" Width="600" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize">
+        Title="Soup" Height="200" Width="400" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" Topmost="True">
 
     <Window.Style>
         <Style TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}"/>
@@ -18,20 +18,37 @@
         ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
 
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo>
+            
+        </TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
+    
 
     <Window.CommandBindings>
+        <CommandBinding Command="SystemCommands.CloseWindowCommand" Executed="CloseWindow" CanExecute="ExitCanExecute" />
         <CommandBinding Command="SystemCommands.MinimizeWindowCommand" Executed="MinimizeWindow"  CanExecute="CanExecute" />
     </Window.CommandBindings>
 
     <DockPanel x:Name="Root">
         <Grid x:Name="TitleBar" DockPanel.Dock="Top" Background="#262630" MouseMove="TitleBar_MouseMove">
             <DockPanel>
+                <Button Visibility="Visible" Width="40" Height="40" VerticalContentAlignment="Center" FontSize="10" Opacity="0.8" Command="SystemCommands.CloseWindowCommand" Content="&#xE10A;" FontFamily="Segoe MDL2 Assets"  DockPanel.Dock="Right" Style="{DynamicResource {x:Static adonisUi:Styles.ToolbarButton}}"/>
                 <Button Visibility="Visible" Width="40" Height="40" VerticalContentAlignment="Center" FontSize="10" Opacity="0.8" Command="SystemCommands.MinimizeWindowCommand" Content="&#xE108;" FontFamily="Segoe MDL2 Assets" DockPanel.Dock="Right" Style="{DynamicResource {x:Static adonisUi:Styles.ToolbarButton}}"/>
                 <TextBlock Text="Soup" IsHitTestVisible="False" FontFamily="Segoe UI" FontWeight="ExtraLight" Margin="12,0,0,0" Foreground="White" VerticalAlignment="Center"/>
             </DockPanel>
         </Grid>
         <Grid>
-            <ProgressBar x:Name="MyProgressBar" HorizontalAlignment="Stretch" VerticalAlignment="Center" MinHeight="40" Margin="20,5,20,5" Value="0"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ProgressBar x:Name="OverviewProgress" HorizontalAlignment="Stretch" VerticalAlignment="Center" MinHeight="40" Margin="20,5,20,5" Value="0" ValueChanged="OverviewProgress_ValueChanged"/>
+            <StackPanel Grid.Row="1">
+                <TextBlock x:Name="DetailedProgressTitle" Text="Starting ..." Margin="20,0,0,0" FontWeight="ExtraLight" FontFamily="Segoe UI"/>
+                <TextBlock x:Name="DetailedSecondProgressTitle" Text="" Margin="20,0,0,0" FontWeight="ExtraLight" FontFamily="Segoe UI"/>
+                <ProgressBar x:Name="DetailedProgress" HorizontalAlignment="Stretch" VerticalAlignment="Center" MinHeight="20" Margin="20,5,20,5" Value="0" IsIndeterminate="True"/>
+            </StackPanel>
         </Grid>
     </DockPanel>
 </Window>

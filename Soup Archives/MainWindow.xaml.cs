@@ -1,3 +1,4 @@
+using SharpCompress.Archives;
 using SharpCompress.Common;
 using SharpCompress.Readers;
 using System;
@@ -33,12 +34,15 @@ namespace Soup_Archives
             Loaded += MainWindow_Loaded;
         }
 
-        private string[] args = Environment.GetCommandLineArgs();
+        //private string[] args = Environment.GetCommandLineArgs();
+        private string[] args = { "/SoupAutoExtract", @"C:\Users\andre\Desktop\Temp\FlaggyFlags.rar" };
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Paused;
             if (AutoExtractExists() && HasValidArchive())
             {
                 CreateTrayIcon();
+                this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
                 string ArchivePath = args.Last();
                 string OutputPath = CreateValidOutputPath(ArchivePath);
                 RunExtract(ArchivePath, OutputPath);
@@ -46,6 +50,7 @@ namespace Soup_Archives
             else
             {
                 new AboutWindow().Show();
+                Close();
             }
         }
 
@@ -77,46 +82,90 @@ namespace Soup_Archives
             return ExtractPath + (ExtractPathCopy == 0 ? "" : "-" + ExtractPathCopy.ToString());
         }
 
+        private double ExtractProgressOffset = 10;
+        private double TotalArchiveSize = 1;
+        private bool Running = false;
         private async void RunExtract(string ArchivePath, string OutputPath)
         {
+            Running = true;
+            OverviewProgress.Value = 10;
             try
             {
-                using (Stream stream = File.OpenRead(ArchivePath))
-                using (IReader SharpCompressReader = ReaderFactory.Open(stream))
+                var Archive = ArchiveFactory.Open(ArchivePath);
+                var Reader = Archive.ExtractAllEntries();
+                Reader.EntryExtractionProgress += (object sender, ReaderExtractionEventArgs<IEntry> e) =>
                 {
-                    ProgressBar.Maximum = (int)stream.Length;
-                    while (SharpCompressReader.MoveToNextEntry())
+                    if (Double.IsInfinity(e.ReaderProgress.PercentageReadExact))
                     {
-                        if (!SharpCompressReader.Entry.IsDirectory)
+                        System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)delegate ()
                         {
-                            int EntryTotal = (int)SharpCompressReader.Entry.CompressedSize;
-                            ProgressBar.Value += EntryTotal / 2;
-                            await Task.Delay(2000);
-                            await Task.Run(() =>
+                            OverviewProgress.IsIndeterminate = true;
+                            this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+                        });
+                    }
+                    else
+                    {
+                        System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                        {
+                            DetailedSecondProgressTitle.Text = e.Item.Key + " " + e.ReaderProgress.BytesTransferred + "/" + e.Item.Size + ": " + e.ReaderProgress.PercentageRead + "%";
+                            DetailedProgress.IsIndeterminate = false;
+                            this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                            OverviewProgress.Value = ExtractProgressOffset + (e.ReaderProgress.BytesTransferred / TotalArchiveSize * 80);
+                            DetailedProgress.Value = e.ReaderProgress.PercentageRead;
+                        });
+                    }
+                };
+                TotalArchiveSize = Archive.Entries.Where(e => !e.IsDirectory).Sum(e => e.Size);
+                long CompletedArchiveSize = 0;
+                await Task.Run(() =>
+                {
+                    int i = 1;
+                    while (Reader.MoveToNextEntry())
+                    {
+                        if (!Reader.Entry.IsDirectory)
+                        {
+                            System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)delegate ()
                             {
-                                SharpCompressReader.WriteEntryToDirectory(OutputPath, new ExtractionOptions()
-                                {
-                                    ExtractFullPath = true,
-                                    Overwrite = true
-                                });
+                                DetailedProgressTitle.Text = "Working on " + Reader.Entry.Key + " (" + i + " of " + Archive.Entries.Count() + ")";
                             });
-                            ProgressBar.Value += EntryTotal / 2;
-                            await Task.Delay(2000);
+                            i++;
+
+                            Reader.WriteEntryToDirectory(OutputPath, new ExtractionOptions()
+                            {
+                                Overwrite = true,
+                                ExtractFullPath = true
+                            });
+
+                            CompletedArchiveSize += Reader.Entry.Size;
+                            System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                            {
+                                ExtractProgressOffset = 10 + (CompletedArchiveSize / TotalArchiveSize * 80);
+                                OverviewProgress.Value = ExtractProgressOffset;
+                            });
                         }
                     }
-                }
+                });
             }
             catch (Exception ex)
             {
+                Running = false;
                 Status = "Error";
+                this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Error;
                 new AboutWindow().Show();
                 MessageBox.Show(ex.Message, "Soup", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            await Task.Delay(1000);
+            Running = false;
+            CommandManager.InvalidateRequerySuggested();
             Status = "Finished";
             CreateNotification("Extract Complete", "Click to Open");
+            while (OverviewProgress.Value<100)
+            {
+                OverviewProgress.Value += 1;
+                await Task.Delay(100);
+            }
         }
+
         #endregion
         #region Tray Icon
         private System.Windows.Forms.NotifyIcon TrayIcon = new System.Windows.Forms.NotifyIcon();
@@ -134,6 +183,7 @@ namespace Soup_Archives
             TrayIcon.Click += (object o, EventArgs e) => {
                 this.Focus();
             };
+            TrayIcon.Visible = true;
         }
         private void CreateNotification(string Title, string Details)
         {
@@ -154,8 +204,6 @@ namespace Soup_Archives
         private bool CreatedClickEvent = false;
         #endregion
 
-        public System.Windows.Controls.ProgressBar ProgressBar => ProgressBar;
-
         #region Window Titlebar
         public event PropertyChangedEventHandler PropertyChanged;
         private void Notify(params string[] PropertyNames)
@@ -166,6 +214,14 @@ namespace Soup_Archives
 
         private void CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
             e.CanExecute = true;
+
+        private void ExitCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !Running;
+        }
+
+        private void CloseWindow(object sender, ExecutedRoutedEventArgs e) =>
+    Application.Current.Shutdown();
 
         private void MinimizeWindow(object sender, ExecutedRoutedEventArgs e)
         {
@@ -183,5 +239,10 @@ namespace Soup_Archives
             }
         }
         #endregion
+
+        private void OverviewProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            this.TaskbarItemInfo.ProgressValue = e.NewValue / (sender as ProgressBar).Maximum;
+        }
     }
 }
