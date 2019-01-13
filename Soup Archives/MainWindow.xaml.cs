@@ -88,7 +88,8 @@ namespace Soup_Archives
         private async void RunExtract(string ArchivePath, string OutputPath)
         {
             Running = true;
-            OverviewProgress.Value = 10;
+            LaunchSmoothProgressBar();
+            MaxValue = 10;
             try
             {
                 var Archive = ArchiveFactory.Open(ArchivePath);
@@ -110,7 +111,7 @@ namespace Soup_Archives
                             DetailedSecondProgressTitle.Text = e.Item.Key + " " + e.ReaderProgress.BytesTransferred + "/" + e.Item.Size + ": " + e.ReaderProgress.PercentageRead + "%";
                             DetailedProgress.IsIndeterminate = false;
                             this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
-                            OverviewProgress.Value = ExtractProgressOffset + (e.ReaderProgress.BytesTransferred / TotalArchiveSize * 80);
+                            MaxValue = ExtractProgressOffset + (e.ReaderProgress.BytesTransferred / TotalArchiveSize * 80);
                             DetailedProgress.Value = e.ReaderProgress.PercentageRead;
                         });
                     }
@@ -140,7 +141,7 @@ namespace Soup_Archives
                             System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)delegate ()
                             {
                                 ExtractProgressOffset = 10 + (CompletedArchiveSize / TotalArchiveSize * 80);
-                                OverviewProgress.Value = ExtractProgressOffset;
+                                MaxValue = ExtractProgressOffset;
                             });
                         }
                     }
@@ -161,8 +162,27 @@ namespace Soup_Archives
             CreateNotification("Extract Complete", "Click to Open");
             while (OverviewProgress.Value<100)
             {
-                OverviewProgress.Value += 1;
-                await Task.Delay(100);
+                OverviewProgress.Value += 0.4;
+                await Task.Delay(20);
+            }
+        }
+        private double MaxValue = 0;
+        private async void LaunchSmoothProgressBar()
+        {
+            while (Running&&OverviewProgress.IsIndeterminate==false)
+            {
+                if (OverviewProgress.Value<MaxValue)
+                {
+                    await System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                    {
+                        OverviewProgress.Value += 0.4;
+                    });
+                    await Task.Delay(50);
+                }
+                else
+                {
+                    await Task.Delay(200);
+                }
             }
         }
 
