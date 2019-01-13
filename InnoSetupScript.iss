@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Soup"
-#define MyAppVersion "1.0.5"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "Andrew Mitchell"
 #define MyAppURL "https://andrewmitchell4.typeform.com/to/EPQpiB"
 #define MyAppExeName "Soup.exe"
@@ -58,7 +58,7 @@ Root: "HKCR"; Subkey: ".z"; ValueType: string; ValueData: "{#MyAppName}"; Flags:
 Root: "HKCR"; Subkey: ".rar"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
 Root: "HKCR"; Subkey: ".tar"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
 Root: "HKCR"; Subkey: ".zip"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
-Root: "HKCR"; Subkey: "{#MyAppName}"; ValueType: string; ValueData: "Program {#MyAppName}"; Flags: uninsdeletekey
+Root: "HKCR"; Subkey: "{#MyAppName}"; ValueType: string; ValueData: "{#MyAppName}"; Flags: uninsdeletekey
 Root: "HKCR"; Subkey: "{#MyAppName}\DefaultIcon"; ValueType: string; ValueData: "{app}\{#MyAppExeName},3"
 Root: "HKCR"; Subkey: "{#MyAppName}\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""/SoupAutoExtract"" ""%1"""
 

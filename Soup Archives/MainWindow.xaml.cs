@@ -34,8 +34,8 @@ namespace Soup_Archives
             Loaded += MainWindow_Loaded;
         }
 
-        //private string[] args = Environment.GetCommandLineArgs();
-        private string[] args = { "/SoupAutoExtract", @"C:\Users\andre\Desktop\Temp\FlaggyFlags.rar" };
+        private string[] args = Environment.GetCommandLineArgs();
+        //private string[] args = { "/SoupAutoExtract", @"C:\Users\andre\Desktop\Temp\FlaggyFlags.rar" };
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Paused;
