@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 
 //Because we imported Windows.Forms .......
@@ -38,87 +40,130 @@ namespace Soup_Archives
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
-
-            _notifyIcon = new NotifyIcon()
-            {
-                Text= "Working ..."
-            };
-            _notifyIcon.Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
         }
 
-        private readonly NotifyIcon _notifyIcon;
-        private const int Delay = 4000;
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private string[] args = Environment.GetCommandLineArgs();
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            try
+            if (AutoExtractExists() && HasValidArchive())
             {
-                CheckForFile();
+                CreateTrayIcon();
+                string ArchivePath = args.Last();
+                string OutputPath = CreateValidOutputPath(ArchivePath);
+                RunExtract(ArchivePath, OutputPath);
             }
-            catch (Exception ex)
+            else
             {
-                System.Windows.MessageBox.Show(ex.Message, "Soup");
-            }
-
-            if (DidExtract)
-            {
-                Hide();
-                _notifyIcon.Text = "Done!";
-                await Task.Delay(Delay + 2000);
-                Close();
+                new AboutWindow().Show();
             }
         }
 
-        private bool DidExtract = false;
-        private void CheckForFile()
+
+        #region Auto Extract Helpers
+        private bool AutoExtractExists()
         {
-            string[] args = Environment.GetCommandLineArgs();
-            if (!args.Contains("tryOpen"))
-                return;
-            if (args.Count() == 0)
-                return;
-            string FilePath = args.Last();
+            return args.Contains("/SoupAutoExtract");
+        }
 
-            if (!File.Exists(FilePath))
-                FilePath = Environment.GetCommandLineArgs()[0].ToString();
+        private bool HasValidArchive()
+        {
+            string ArchivePath = args.Last();
+            if (!File.Exists(ArchivePath))
+            {
+                return false;
+            }
+            return MessageBox.Show("Try Extract " + Path.GetFileNameWithoutExtension(ArchivePath) + " to " + Path.GetDirectoryName(ArchivePath) + "?", "Soup", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+        }
 
-            if (!File.Exists(FilePath))
-                return;
-
-            if (MessageBox.Show("Try Extract " + Path.GetFileNameWithoutExtension(FilePath) + " to " + Path.GetDirectoryName(FilePath) + "?", "Soup", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                return;
-
-            _notifyIcon.Visible = true;
-            string ExtractPath = Path.Combine(Path.GetDirectoryName(FilePath), Path.GetFileNameWithoutExtension(FilePath));
+        private string CreateValidOutputPath(string ArchivePath)
+        {
+            string ExtractPath = Path.Combine(Path.GetDirectoryName(ArchivePath), Path.GetFileNameWithoutExtension(ArchivePath));
             int ExtractPathCopy = 0;
             while (Directory.Exists(ExtractPath + (ExtractPathCopy == 0 ? "" : "-" + ExtractPathCopy.ToString())))
             {
                 ExtractPathCopy++;
             }
-            ExtractPath += (ExtractPathCopy == 0 ? "" : "-" + ExtractPathCopy.ToString());
+            return ExtractPath + (ExtractPathCopy == 0 ? "" : "-" + ExtractPathCopy.ToString());
+        }
 
-            using (Stream stream = File.OpenRead(FilePath))
-            using (var reader = SharpCompress.Readers.ReaderFactory.Open(stream))
+        private async void RunExtract(string ArchivePath, string OutputPath)
+        {
+            try
             {
-                while (reader.MoveToNextEntry())
+                using (Stream stream = File.OpenRead(ArchivePath))
+                using (IReader SharpCompressReader = ReaderFactory.Open(stream))
                 {
-                    if (!reader.Entry.IsDirectory)
+                    ProgressBar.Maximum = (int)stream.Length;
+                    while (SharpCompressReader.MoveToNextEntry())
                     {
-                        Console.WriteLine(reader.Entry.Key);
-                        reader.WriteEntryToDirectory(ExtractPath, new ExtractionOptions()
+                        if (!SharpCompressReader.Entry.IsDirectory)
                         {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
+                            int EntryTotal = (int)SharpCompressReader.Entry.CompressedSize;
+                            ProgressBar.Value += EntryTotal / 2;
+                            await Task.Delay(2000);
+                            await Task.Run(() =>
+                            {
+                                SharpCompressReader.WriteEntryToDirectory(OutputPath, new ExtractionOptions()
+                                {
+                                    ExtractFullPath = true,
+                                    Overwrite = true
+                                });
+                            });
+                            ProgressBar.Value += EntryTotal / 2;
+                            await Task.Delay(2000);
+                        }
                     }
                 }
             }
-            DidExtract = true;
-            _notifyIcon.BalloonTipClicked += (s, a) =>
+            catch (Exception ex)
             {
-                Process.Start(ExtractPath);
-            };
-            _notifyIcon.ShowBalloonTip(Delay, "Extract Complete", "Click to Open", ToolTipIcon.Info);
+                Status = "Error";
+                new AboutWindow().Show();
+                MessageBox.Show(ex.Message, "Soup", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            await Task.Delay(1000);
+            Status = "Finished";
+            CreateNotification("Extract Complete", "Click to Open");
         }
+        #endregion
+        #region Tray Icon
+        private System.Windows.Forms.NotifyIcon TrayIcon = new System.Windows.Forms.NotifyIcon();
+        public string Status
+        {
+            set
+            {
+                TrayIcon.Text = value;
+            }
+        }
+        private void CreateTrayIcon()
+        {
+            TrayIcon.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Status = "Idle";
+            TrayIcon.Click += (object o, EventArgs e) => {
+                this.Focus();
+            };
+        }
+        private void CreateNotification(string Title, string Details)
+        {
+            TrayIcon.ShowBalloonTip(3000, Title, Details, System.Windows.Forms.ToolTipIcon.None);
+        }
+        private void CreateNotificationClickEvent(string OutputPath)
+        {
+            if (CreatedClickEvent)
+            {
+                return;
+            }
+            CreatedClickEvent = true;
+            TrayIcon.BalloonTipClicked += (object sender, EventArgs e) =>
+            {
+                Process.Start(OutputPath);
+            };
+        }
+        private bool CreatedClickEvent = false;
+        #endregion
+
+        public System.Windows.Controls.ProgressBar ProgressBar => ProgressBar;
 
         #region Window Titlebar
         public event PropertyChangedEventHandler PropertyChanged;
@@ -127,9 +172,6 @@ namespace Soup_Archives
             foreach (string PropertyName in PropertyNames)
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
         }
-
-        private void CloseWindow(object sender, ExecutedRoutedEventArgs e) =>
-            Application.Current.Shutdown();
 
         private void CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
             e.CanExecute = true;
@@ -150,8 +192,5 @@ namespace Soup_Archives
             }
         }
         #endregion
-
-        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e) =>
-            System.Diagnostics.Process.Start(e.Uri.ToString());
     }
 }
