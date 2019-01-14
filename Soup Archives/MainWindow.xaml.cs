@@ -35,7 +35,7 @@ namespace Soup_Archives
         }
 
         private string[] args = Environment.GetCommandLineArgs();
-        //private string[] args = { "/SoupAutoExtract", @"C:\Users\andre\Desktop\Temp\FlaggyFlags.rar" };
+        //private string[] args = { "/SoupAutoExtract", @"C:\Users\andre\Desktop\Temp\Mouse.rar" };
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Paused;
@@ -162,8 +162,8 @@ namespace Soup_Archives
             CreateNotification("Extract Complete", "Click to Open");
             while (OverviewProgress.Value<100)
             {
-                OverviewProgress.Value += 0.4;
-                await Task.Delay(20);
+                OverviewProgress.Value += 1;
+                await Task.Delay(2);
             }
         }
         private double MaxValue = 0;
@@ -173,11 +173,27 @@ namespace Soup_Archives
             {
                 if (OverviewProgress.Value<MaxValue)
                 {
-                    await System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                    double Behind = MaxValue - OverviewProgress.Value;
+                    if (Behind < 20)
                     {
-                        OverviewProgress.Value += 0.4;
-                    });
-                    await Task.Delay(50);
+                        OverviewProgress.Value += 0.1;
+                        await Task.Delay(20);
+                    }
+                    else if (Behind < 30)
+                    {
+                        OverviewProgress.Value += 0.2;
+                        await Task.Delay(10);
+                    }
+                    else if (Behind < 40)
+                    {
+                        OverviewProgress.Value += 0.5;
+                        await Task.Delay(3);
+                    }
+                    else
+                    {
+                        OverviewProgress.Value += 1;
+                        await Task.Delay(2);
+                    }
                 }
                 else
                 {
