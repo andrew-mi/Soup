@@ -1,6 +1,6 @@
 SetUserFTA .rar Soup
 SetUserFTA .tar Soup
-SetUserFTA .zip Soup
+::SetUserFTA .zip Soup
 SetUserFTA .7z Soup
 SetUserFTA .gz Soup
 SetUserFTA .tgz Soup
