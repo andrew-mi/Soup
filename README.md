@@ -1,8 +1,10 @@
 ![Promo Image](https://i.postimg.cc/wBnGG2cp/Group.png)
-# Soup
+# Soup 
 Soup Helps You Quickly Extract Rar, Zip, Tar and 7Zip Archives
 
 Once set as your default program for your archive formats you can extract them with a simple double click!
+
+[![Build Status](https://andrewmi.visualstudio.com/Soup/_apis/build/status/Soup%20Build?branchName=master)](https://andrewmi.visualstudio.com/Soup/_build/latest?definitionId=3?branchName=master)
 
 ## Installing
 - Download the Beta [Here](https://github.com/andrew-mi/Soup/releases/latest) 
