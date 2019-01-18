@@ -120,16 +120,17 @@ namespace Soup_Archives
                 long CompletedArchiveSize = 0;
                 await Task.Run(() =>
                 {
-                    int i = 1;
+                    int i = 0;
+                    int m = Archive.Entries.Count();
                     while (Reader.MoveToNextEntry())
                     {
+                        i++;
                         if (!Reader.Entry.IsDirectory)
                         {
                             System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)delegate ()
                             {
-                                DetailedProgressTitle.Text = "Working on " + Reader.Entry.Key + " (" + i + " of " + Archive.Entries.Count() + ")";
+                                DetailedProgressTitle.Text = "Working on " + Reader.Entry.Key + " (" + i + " of " + m + ")";
                             });
-                            i++;
 
                             Reader.WriteEntryToDirectory(OutputPath, new ExtractionOptions()
                             {
