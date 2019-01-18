@@ -158,6 +158,7 @@ namespace Soup_Archives
             }
             Running = false;
             CommandManager.InvalidateRequerySuggested();
+            CreateNotificationClickEvent(OutputPath);
             Status = "Finished";
             CreateNotification("Extract Complete", "Click to Open");
             while (OverviewProgress.Value<100)
